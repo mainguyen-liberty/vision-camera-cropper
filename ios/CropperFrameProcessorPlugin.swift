@@ -66,7 +66,7 @@ public class CropperFrameProcessorPlugin: FrameProcessorPlugin {
     return cropResult
   }
     
-  func saveImage(_ image:UIImage, nameFile: string) -> String {
+  func saveImage(_ image:UIImage, nameFile: String) -> String {
     let url = FileManager.default.temporaryDirectory
                             .appendingPathComponent(UUID().uuidString)
                             .appendingPathExtension("jpeg")
