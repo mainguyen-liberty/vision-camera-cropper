@@ -44,9 +44,12 @@ public class CropperFrameProcessorPlugin extends FrameProcessorPlugin {
 
       if (arguments != null && arguments.containsKey("saveAsFile")) {
         boolean saveAsFile = (boolean) arguments.get("saveAsFile");
+        String fileName = System.currentTimeMillis() + ".jpg";
+        if(arguments.containsKey("nameFile")){
+          fileName = (String) arguments.get("nameFile");
+        }
         if (saveAsFile == true) {
           File cacheDir = VisionCameraCropperModule.getContext().getCacheDir();
-          String fileName = System.currentTimeMillis() + ".jpg";
           String path = BitmapUtils.saveImage(bm,cacheDir,fileName);
           result.put("path",path);
         }
