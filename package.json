@@ -2,9 +2,6 @@
   "name": "vision-camera-cropper",
   "version": "1.0.0",
   "description": "A react native vision camera frame processor for cropping",
-  "main": "lib/commonjs/index",
-  "module": "lib/module/index",
-  "types": "lib/typescript/src/index.d.ts",
   "react-native": "src/index",
   "source": "src/index",
   "files": [
@@ -26,12 +23,10 @@
     "!**/.*"
   ],
   "scripts": {
-    "example": "yarn workspace vision-camera-cropper-example",
     "test": "jest",
     "typecheck": "tsc --noEmit",
     "lint": "eslint \"**/*.{js,ts,tsx}\"",
     "clean": "del-cli android/build example/android/build example/android/app/build example/ios/build lib",
-    "prepare": "bob build",
     "release": "release-it"
   },
   "keywords": [
@@ -71,7 +66,6 @@
     "prettier": "^3.0.3",
     "react": "18.2.0",
     "react-native": "0.73.4",
-    "react-native-builder-bob": "^0.20.0",
     "react-native-vision-camera": "^4.0.1",
     "react-native-worklets-core": "^1.1.1",
     "release-it": "^15.0.0",
@@ -146,19 +140,5 @@
     "tabWidth": 2,
     "trailingComma": "es5",
     "useTabs": false
-  },
-  "react-native-builder-bob": {
-    "source": "src",
-    "output": "lib",
-    "targets": [
-      "commonjs",
-      "module",
-      [
-        "typescript",
-        {
-          "project": "tsconfig.build.json"
-        }
-      ]
-    ]
   }
 }

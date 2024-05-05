@@ -59,13 +59,14 @@ public class CropperFrameProcessorPlugin: FrameProcessorPlugin {
         cropResult["base64"] = getBase64FromImage(image)
     }
     let saveAsFile = arguments!["saveAsFile"] as? Bool ?? false
+    let nameFile = arguments!["nameFile"] as? String ?? UUID().uuidString
     if saveAsFile == true {
-      cropResult["path"] = saveImage(image)
+      cropResult["path"] = saveImage(image, nameFile: nameFile)
     }
     return cropResult
   }
     
-  func saveImage(_ image:UIImage) -> String {
+  func saveImage(_ image:UIImage, nameFile: string) -> String {
     let url = FileManager.default.temporaryDirectory
                             .appendingPathComponent(UUID().uuidString)
                             .appendingPathExtension("jpeg")
