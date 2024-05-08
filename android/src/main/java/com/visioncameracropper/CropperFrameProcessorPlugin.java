@@ -43,11 +43,12 @@ public class CropperFrameProcessorPlugin extends FrameProcessorPlugin {
 
       int maxWidth = 0;
       int maxHeight = 0;
+
       if (arguments != null && arguments.containsKey("maxWidth")) {
-        maxWidth = (int) arguments.get("maxWidth");
+        maxWidth = (int) Double.valueOf((double)arguments.get("maxWidth")).intValue();
       }
       if (arguments != null && arguments.containsKey("maxHeight")) {
-        maxHeight = (int) arguments.get("maxHeight");
+        maxHeight = (int) Double.valueOf((double)arguments.get("maxHeight")).intValue();
       }
 
       bm = BitmapUtils.resizeImage(bm,maxWidth,maxHeight);
@@ -60,9 +61,8 @@ public class CropperFrameProcessorPlugin extends FrameProcessorPlugin {
         if (saveAsFile == true) {
           File cacheDir = VisionCameraCropperModule.getContext().getCacheDir();
           String path = BitmapUtils.saveImage(bm,cacheDir,fileName,100);
-          float size = BitmapUtils.getFileSize(path);
+//          float size = BitmapUtils.getFileSize(path);
           result.put("path",path);
-          Log.d("mai.nguyen", String.valueOf(size));
         }
       }
     } catch (FrameInvalidError e) {
