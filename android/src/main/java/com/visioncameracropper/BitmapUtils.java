@@ -238,11 +238,16 @@ public class BitmapUtils {
         return Base64.encodeToString(outputStream.toByteArray(), Base64.DEFAULT);
     }
 
-    public static String saveImage(Bitmap bmp, File dir, String fileName) {
+    public static String saveImage(Bitmap bmp, File dir, String fileName, int quality) {
         File file = new File(dir, fileName);
+        if (file.exists()){
+          Log.d("mai.nguyen file.exists", "aaa");
+          file.delete();
+        }
         try {
+            file.createNewFile();
             FileOutputStream fos = new FileOutputStream(file);
-            bmp.compress(Bitmap.CompressFormat.JPEG, 100, fos);
+            bmp.compress(Bitmap.CompressFormat.JPEG, quality, fos);
             fos.flush();
             fos.close();
             return file.getAbsolutePath();
@@ -252,5 +257,60 @@ public class BitmapUtils {
             e.printStackTrace();
         }
         return "";
+    }
+
+    public static long getFileSize(String filePath) {
+      File file = new File(filePath);
+      if (file.exists()) {
+        return file.length(); // Trả về kích thước của tệp (file size) trong byte
+      }
+      return 0; // Trả về 0 nếu tệp không tồn tại
+    }
+
+    public static int calculateResolutionQuality(Bitmap bitmap, int targetDpi) {
+      // Lấy kích thước của ảnh
+      int width = bitmap.getWidth();
+      int height = bitmap.getHeight();
+      // Lấy độ phân giải của ảnh (DPI)
+      int dpi = bitmap.getDensity();
+
+      // Tính toán tỷ lệ độ phân giải so với độ phân giải mục tiêu
+      float resolutionQuality = targetDpi/((float) dpi);
+      float percent = Math.abs(resolutionQuality*100);
+      // Trả về phần trăm chất lượng độ phân giải
+      return (int) Math.floor(Math.min(percent, 100));
+    }
+
+    public static Bitmap resizeImage(Bitmap image, int newWidth, int newHeight) {
+      Bitmap newImage = null;
+      if (image == null) {
+        return null; // Can't load the image from the given path.
+      }
+
+      int width = image.getWidth();
+      int height = image.getHeight();
+
+      if (newHeight > 0 && newWidth > 0) {
+        int finalWidth;
+        int finalHeight;
+
+        // "contain" (default) or "cover": keep its aspect ratio
+        float widthRatio = (float) newWidth / width;
+        float heightRatio = (float) newHeight / height;
+
+        float ratio = Math.min(widthRatio, heightRatio);
+        ratio = Math.min(ratio, 1);
+
+        finalWidth = (int) Math.round(width * ratio);
+        finalHeight = (int) Math.round(height * ratio);
+
+        try {
+          newImage = Bitmap.createScaledBitmap(image, finalWidth, finalHeight, true);
+        } catch (OutOfMemoryError e) {
+          return null;
+        }
+      }
+
+      return newImage;
     }
 }

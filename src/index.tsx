@@ -32,6 +32,8 @@ export function crop(frame: Frame, config?: CropConfig): CropResult {
   if (plugin == null) throw new Error('Failed to load Frame Processor Plugin "crop"!')
   if (config) {
     let record: Record<string, any> = {};
+    record["maxWidth"] = config.maxWidth ?? 0
+    record["maxHeight"] = config.maxHeight ?? 0
     if (config.includeImageBase64 != undefined && config.includeImageBase64 != null) {
       record["includeImageBase64"] = config.includeImageBase64;
     }
@@ -41,6 +43,7 @@ export function crop(frame: Frame, config?: CropConfig): CropResult {
     if (config.nameFile != undefined && config.nameFile != null) {
       record["nameFile"] = config.nameFile;
     }
+
     if (config.cropRegion) {
       let cropRegionRecord: Record<string, any> = {};
       cropRegionRecord["left"] = config.cropRegion.left;
@@ -68,6 +71,8 @@ export interface CropConfig {
   includeImageBase64?: boolean;
   saveAsFile?: boolean;
   nameFile?: string;
+  maxWidth?: number;
+  maxHeight?: number;
 }
 
 export interface CropResult {

@@ -24,7 +24,6 @@ public class CropperFrameProcessorPlugin extends FrameProcessorPlugin {
   public Object callback(@NonNull Frame frame, @Nullable Map<String, Object> arguments) {
     Map<String, Object> result = new HashMap<String, Object>();
     try {
-      //Log.d("DYM",frame.getWidth()+"x"+frame.getHeight());
       Bitmap bm = BitmapUtils.getBitmap(frame);
       if (arguments != null && arguments.containsKey("cropRegion")) {
         Map<String,Object> cropRegion = (Map<String, Object>) arguments.get("cropRegion");
@@ -42,16 +41,28 @@ public class CropperFrameProcessorPlugin extends FrameProcessorPlugin {
         }
       }
 
+      int maxWidth = 0;
+      int maxHeight = 0;
+      if (arguments != null && arguments.containsKey("maxWidth")) {
+        maxWidth = (int) arguments.get("maxWidth");
+      }
+      if (arguments != null && arguments.containsKey("maxHeight")) {
+        maxHeight = (int) arguments.get("maxHeight");
+      }
+
+      bm = BitmapUtils.resizeImage(bm,maxWidth,maxHeight);
       if (arguments != null && arguments.containsKey("saveAsFile")) {
         boolean saveAsFile = (boolean) arguments.get("saveAsFile");
         String fileName = System.currentTimeMillis() + ".jpg";
         if(arguments.containsKey("nameFile")){
-          fileName = (String) arguments.get("nameFile");
+          fileName = (String) arguments.get("nameFile") + ".jpg";
         }
         if (saveAsFile == true) {
           File cacheDir = VisionCameraCropperModule.getContext().getCacheDir();
-          String path = BitmapUtils.saveImage(bm,cacheDir,fileName);
+          String path = BitmapUtils.saveImage(bm,cacheDir,fileName,100);
+          float size = BitmapUtils.getFileSize(path);
           result.put("path",path);
+          Log.d("mai.nguyen", String.valueOf(size));
         }
       }
     } catch (FrameInvalidError e) {
