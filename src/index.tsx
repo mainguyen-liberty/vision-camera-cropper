@@ -58,6 +58,25 @@ export function crop(frame: Frame, config?: CropConfig): CropResult {
   }
 }
 
+export function cropImage(path: string, config: CropImageConfig) {
+  if (config) {
+    let record: Record<string, any> = {};
+    record["width"] = config.width ?? 0
+    record["height"] = config.height ?? 0
+    record["top"] = config.top ?? 0
+    record["left"] = config.left ?? 0
+    record["quality"] = config.quality ?? 100
+    record["nameFile"] = config.nameFile ?? "cropImage"
+    record["maxWidth"] = config.maxWidth ?? 0
+    record["maxHeight"] = config.maxHeight ?? 0
+
+    return VisionCameraCropper.cropImage(path, record) as any;
+  } else {
+    return new Error("miss config")
+  }
+}
+
+
 //the value is in percentage
 export interface CropRegion {
   left: number;
@@ -74,6 +93,17 @@ export interface CropConfig {
   maxWidth?: number;
   maxHeight?: number;
 }
+export interface CropImageConfig {
+  width: number;
+  height: number;
+  top: number;
+  left: number;
+  quality: number;
+  nameFile: string;
+  maxWidth?: number;
+  maxHeight?: number;
+}
+
 
 export interface CropResult {
   base64?: string;
