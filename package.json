@@ -4,6 +4,7 @@
   "description": "A react native vision camera frame processor for cropping",
   "react-native": "src/index",
   "source": "src/index",
+  "types": "src/index",
   "files": [
     "src",
     "lib",

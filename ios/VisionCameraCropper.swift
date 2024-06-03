@@ -40,7 +40,39 @@ class VisionCameraCropper: NSObject {
         
         croppedImage = BitmapUtils.resizeImage(croppedImage, newWidth: maxWidth, newHeight: maxHeight)
         let fileURL = BitmapUtils.saveImage(croppedImage, nameFile: nameFile)
-        let size = BitmapUtils.getFileSize(fileURL)
         resolver(fileURL)
+    }
+    
+    @objc(resizeImage:options:resolver:rejecter:)
+    func resizeImage(imagePath: String, options: NSDictionary, resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        let maxSizeInMB = options["maxSizeInMB"] as! CGFloat
+        let quality = options["quality"] as! CGFloat
+        
+        guard var image = UIImage(contentsOfFile: imagePath) else {
+            rejecter("E_IMAGE_DECODE_ERROR", "Could not decode image", nil)
+            return
+        }
+        let newSize = CGSize(width: 1024, height: 1024)
+        
+        image = BitmapUtils.resizeImage(image, newWidth: Int(newSize.width), newHeight: Int(newSize.height))
+        let minQuality = BitmapUtils.getMinQuality(image,path: imagePath, quality: maxSizeInMB, maxSizeInMB: quality ) ?? quality
+        let fileURL = BitmapUtils.compressImage(image, path: imagePath,quality: minQuality )
+        let size = BitmapUtils.getFileSize(imagePath)
+        
+        let result = [
+            "path": fileURL,
+            "size": size!,
+            "width": image.size.width,
+            "height":image.size.height,
+        ] as [String : Any]
+        
+        resolver(result)
+    }
+    
+    @objc(clearCache:rejecter:)
+    func clearCache(resolver: @escaping RCTPromiseResolveBlock, rejecter: @escaping RCTPromiseRejectBlock) {
+        let tempDirectoryURL = FileManager.default.temporaryDirectory
+        BitmapUtils.clearCacheDirectory(tempDirectoryURL)
+        resolver(true)
     }
 }

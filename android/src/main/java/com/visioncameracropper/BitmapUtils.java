@@ -17,6 +17,8 @@ package com.visioncameracropper;
  */
 
 import android.annotation.TargetApi;
+import android.content.ContentResolver;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -25,6 +27,7 @@ import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.media.Image;
 import android.media.Image.Plane;
+import android.net.Uri;
 import android.os.Build.VERSION_CODES;
 import androidx.annotation.Nullable;
 
@@ -41,6 +44,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.ByteBuffer;
 
 /** Utils functions for bitmap conversions. */
@@ -241,7 +245,6 @@ public class BitmapUtils {
     public static String saveImage(Bitmap bmp, File dir, String fileName, int quality) {
         File file = new File(dir, fileName);
         if (file.exists()){
-          Log.d("mai.nguyen file.exists", "aaa");
           file.delete();
         }
         try {
@@ -312,5 +315,55 @@ public class BitmapUtils {
       }
 
       return newImage;
+    }
+
+    public static float getMinQuality(Bitmap image, float quality, float maxSizeInMB) {
+        int maxSizeInBytes = (int) (maxSizeInMB * 1024 * 1024);
+        float compressionQuality = quality;
+
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        image.compress(Bitmap.CompressFormat.JPEG, (int) (compressionQuality * 100), outputStream);
+        int size = outputStream.size();
+
+        while (size > maxSizeInBytes && compressionQuality > 0) {
+        compressionQuality -= 0.1f;
+        outputStream.reset();
+        image.compress(Bitmap.CompressFormat.JPEG, (int) (compressionQuality * 100), outputStream);
+        size = outputStream.size();
+        }
+
+        return compressionQuality;
+    }
+
+    public static Bitmap uriToBitmap(Context context, String imagePath) {
+        Bitmap bitmap = null;
+        BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+        try {
+        Uri imageUri = Uri.parse(imagePath);
+        ContentResolver contentResolver = context.getContentResolver();
+        InputStream inputStream = contentResolver.openInputStream(imageUri);
+        bitmap = BitmapFactory.decodeStream(inputStream);
+        inputStream.close();
+        } catch (IOException e) {
+        bitmap = BitmapFactory.decodeFile(imagePath, bmOptions);
+        e.printStackTrace();
+        }
+        return bitmap;
+    }
+
+    public static void clearCacheDirectory(File directory) {
+        if (directory.exists()) {
+        File[] files = directory.listFiles();
+        if (files != null) {
+            for (File file : files) {
+            if (file.isDirectory()) {
+                clearCacheDirectory(file);
+            } else {
+                file.delete();
+            }
+            }
+        }
+        directory.delete();
+        }
     }
 }

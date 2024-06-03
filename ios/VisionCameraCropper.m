@@ -8,6 +8,11 @@ RCT_EXTERN_METHOD(multiply:(float)a withB:(float)b
 
 RCT_EXTERN_METHOD(cropImage:(NSString *)imagePath options:(NSDictionary *)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
 
+RCT_EXTERN_METHOD(resizeImage:(NSString *)imagePath options:(NSDictionary *)options resolver:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+RCT_EXTERN_METHOD(clearCache:(RCTPromiseResolveBlock)resolve rejecter:(RCTPromiseRejectBlock)reject)
+
+
 + (BOOL)requiresMainQueueSetup
 {
   return NO;

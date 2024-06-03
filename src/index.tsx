@@ -77,6 +77,32 @@ export function cropImage(path: string, config: CropImageConfig) {
 }
 
 
+export const resizeImage = (path: string, options: {maxSizeInMB: number, quality: number, fileName?: string}) => {
+  const _options = {
+    maxSizeInMB: options?.maxSizeInMB ?? 5,
+    quality: options?.quality ?? 0.9,
+    fileName: options?.fileName ?? '',
+  };
+
+  return new Promise(async (resolve: (data: ResizeResult) => void, reject) => {
+    try {
+      const response = await VisionCameraCropper.resizeImage(path?.replace("file://", ''), {..._options})
+      resolve(response as ResizeResult);
+      return;
+    } catch (e) {
+      reject(e);
+    }
+  });
+};
+
+export const clearCache = () => {
+  try {
+    VisionCameraCropper.clearCache()
+  } catch { }
+};
+
+
+
 //the value is in percentage
 export interface CropRegion {
   left: number;
@@ -108,4 +134,11 @@ export interface CropImageConfig {
 export interface CropResult {
   base64?: string;
   path?: string;
+}
+
+export interface ResizeResult {
+  path: string;
+  width: number;
+  height: number;
+  size: number;
 }
